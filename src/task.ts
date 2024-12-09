@@ -9,29 +9,30 @@ export interface CategoryListElement {
   showOnHome: boolean;
 }
 
-const getOrder = (title: string): string => {
-  if (title.includes('#')) {
+const getOrder = (title: string, mainCategoryTitle: string): string => {
+  if (title?.includes('#')) {
     return title.split('#')[0];
   }
-  return title;
+  return mainCategoryTitle;
 };
 
 const isStringANumber = (strNumber: string): boolean => {
   return !isNaN(parseInt(strNumber));
 };
 
-const sortElements = (category: Category, fallBackTitle: string) => {
-  const order = getOrder(category.Title);
+const sortElements = (
+  category: Category,
+  mainCategoryTitle: string = category.Title
+) => {
+  const order = getOrder(category.Title, mainCategoryTitle);
   const orderL1 = isStringANumber(order) ? parseInt(order) : category.id;
 
   const l2Kids = (category.children ?? []).map((c2) => {
-    const order2 =
-      c2.Title && c2.Title.includes('#') ? getOrder(c2.Title) : fallBackTitle;
+    const order2 = getOrder(c2.Title, mainCategoryTitle);
     const orderL2 = isStringANumber(order2) ? parseInt(order2) : c2.id;
 
     const l3Kids = (c2.children ?? []).map((c3) => {
-      const order3 =
-        c3.Title && c3.Title.includes('#') ? getOrder(c3.Title) : fallBackTitle;
+      const order3 = getOrder(c3.Title, mainCategoryTitle);
       const orderL3 = isStringANumber(order3) ? parseInt(order3) : c3.id;
       return {
         id: c3.id,
