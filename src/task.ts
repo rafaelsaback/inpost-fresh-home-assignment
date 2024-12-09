@@ -17,7 +17,7 @@ const getOrder = (title: string): string => {
 };
 
 const isStringANumber = (strNumber: string): boolean => {
-  return !isNaN(Number(strNumber));
+  return !isNaN(parseInt(strNumber));
 };
 
 export const getCategoryTree = async (
