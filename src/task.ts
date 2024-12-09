@@ -16,6 +16,10 @@ const getOrder = (title: string): string => {
   return title;
 };
 
+const isStringANumber = (strNumber: string): boolean => {
+  return !isNaN(Number(strNumber));
+};
+
 export const getCategoryTree = async (
   getCategories: () => Promise<{ data: Category[] }>
 ): Promise<CategoryListElement[]> => {
@@ -33,10 +37,8 @@ export const getCategoryTree = async (
       toShowOnHome.push(c1.id);
     }
 
-    let orderL1 = parseInt(order);
-    if (isNaN(orderL1)) {
-      orderL1 = c1.id;
-    }
+    const orderL1 = isStringANumber(order) ? parseInt(order) : c1.id;
+
     const l2Kids = c1.children
       ? c1.children.map((c2) => {
           let order2 = c1.Title;
