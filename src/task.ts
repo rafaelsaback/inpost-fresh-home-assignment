@@ -9,6 +9,13 @@ export interface CategoryListElement {
   showOnHome: boolean;
 }
 
+const getOrder = (title: string): string => {
+  if (title.includes('#')) {
+    return title.split('#')[0];
+  }
+  return title;
+};
+
 export const getCategoryTree = async (
   getCategories: () => Promise<{ data: Category[] }>
 ): Promise<CategoryListElement[]> => {
@@ -21,9 +28,8 @@ export const getCategoryTree = async (
   const toShowOnHome: number[] = [];
 
   const result = res.data.map((c1) => {
-    let order = c1.Title;
-    if (c1.Title && c1.Title.includes('#')) {
-      order = c1.Title.split('#')[0];
+    const order = getOrder(c1.Title);
+    if (c1.Title.includes('#')) {
       toShowOnHome.push(c1.id);
     }
 
