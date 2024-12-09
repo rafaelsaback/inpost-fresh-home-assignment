@@ -52,24 +52,26 @@ export const getCategoryTree = async (
     return [];
   }
 
-  const toShowOnHome: number[] = [];
+  const toShowOnHome = res.data
+    .filter((category) => category.Title.includes('#'))
+    .map((category) => category.id);
 
-  const result = res.data.map((c1) => {
-    if (c1.Title.includes('#')) {
-      toShowOnHome.push(c1.id);
-    }
-    return createCategoryListElement(c1, c1.Title);
-  });
+  const categories = res.data.map((c1) =>
+    createCategoryListElement(c1, c1.Title)
+  );
 
-  result.sort((a, b) => a.order - b.order);
+  categories.sort((a, b) => a.order - b.order);
 
-  if (result.length <= 5) {
-    result.forEach((a) => (a.showOnHome = true));
+  if (categories.length <= 5) {
+    return categories.map((category) => ({ ...category, showOnHome: true }));
   } else if (toShowOnHome.length > 0) {
-    result.forEach((x) => (x.showOnHome = toShowOnHome.includes(x.id)));
-  } else {
-    result.forEach((x, index) => (x.showOnHome = index < 3));
+    return categories.map((category) => ({
+      ...category,
+      showOnHome: toShowOnHome.includes(category.id),
+    }));
   }
-
-  return result;
+  return categories.map((category, index) => ({
+    ...category,
+    showOnHome: index < 3,
+  }));
 };
