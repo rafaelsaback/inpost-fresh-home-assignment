@@ -16,30 +16,31 @@ const getOrder = (title: string): string => {
   return title;
 };
 
-const isStringANumber = (strNumber: string): boolean => {
+const isStringAnIntNumber = (strNumber: string): boolean => {
   return !isNaN(parseInt(strNumber));
 };
 
 const createCategoryListElement = (
   category: Category,
-  mainCategoryTitle: string = category.Title
+  isMainCategory = false
 ): CategoryListElement => {
   const order = getOrder(category.Title);
-  const orderNumber = isStringANumber(order) ? parseInt(order) : category.id;
-  const isMainCategory = category.Title === mainCategoryTitle;
+  const orderNumber = isStringAnIntNumber(order)
+    ? parseInt(order)
+    : category.id;
 
-  const children =
-    category.children?.map((child) =>
-      createCategoryListElement(child, mainCategoryTitle)
-    ) ?? [];
+  const children = category.children?.map((child) =>
+    createCategoryListElement(child)
+  );
 
-  children.sort((a, b) => a.order - b.order);
+  children?.sort((a, b) => a.order - b.order);
+
   return {
     id: category.id,
     image: category.MetaTagDescription,
     name: category.name,
     order: orderNumber,
-    children,
+    children: children ?? [],
     showOnHome: isMainCategory && category.Title.includes('#'),
   };
 };
@@ -53,9 +54,7 @@ export const getCategoryTree = async (
     return [];
   }
 
-  const categories = res.data.map((c1) =>
-    createCategoryListElement(c1, c1.Title)
-  );
+  const categories = res.data.map((c1) => createCategoryListElement(c1, true));
 
   categories.sort((a, b) => a.order - b.order);
 
