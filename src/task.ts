@@ -9,11 +9,11 @@ export interface CategoryListElement {
   showOnHome: boolean;
 }
 
-const getOrder = (title: string, mainCategoryTitle: string): string => {
+const getOrder = (title: string): string => {
   if (title?.includes('#')) {
     return title.split('#')[0];
   }
-  return mainCategoryTitle;
+  return title;
 };
 
 const isStringANumber = (strNumber: string): boolean => {
@@ -24,7 +24,7 @@ const createCategoryListElement = (
   category: Category,
   mainCategoryTitle: string = category.Title
 ): CategoryListElement => {
-  const order = getOrder(category.Title, mainCategoryTitle);
+  const order = getOrder(category.Title);
   const orderNumber = isStringANumber(order) ? parseInt(order) : category.id;
   const isMainCategory = category.Title === mainCategoryTitle;
 
