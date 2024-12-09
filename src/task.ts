@@ -9,7 +9,7 @@ export interface CategoryListElement {
   showOnHome: boolean;
 }
 
-export const categoryTree = async (
+export const getCategoryTree = async (
   getCategories: () => Promise<{ data: Category[] }>
 ): Promise<CategoryListElement[]> => {
   const res = await getCategories();
