@@ -1,4 +1,4 @@
-import { getCategories } from './mockedApi';
+import { Category } from './mockedApi';
 
 export interface CategoryListElement {
   name: string;
@@ -9,7 +9,9 @@ export interface CategoryListElement {
   showOnHome: boolean;
 }
 
-export const categoryTree = async (): Promise<CategoryListElement[]> => {
+export const categoryTree = async (
+  getCategories: () => Promise<{ data: Category[] }>
+): Promise<CategoryListElement[]> => {
   const res = await getCategories();
 
   if (!res.data) {
