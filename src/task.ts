@@ -45,14 +45,9 @@ export const getCategoryTree = async (
       const orderL2 = isStringANumber(order2) ? parseInt(order2) : c2.id;
 
       const l3Kids = (c2.children ?? []).map((c3) => {
-        let order3 = c1.Title;
-        if (c3.Title && c3.Title.includes('#')) {
-          order3 = c3.Title.split('#')[0];
-        }
-        let orderL3 = parseInt(order3);
-        if (isNaN(orderL3)) {
-          orderL3 = c3.id;
-        }
+        const order3 =
+          c3.Title && c3.Title.includes('#') ? getOrder(c3.Title) : c1.Title;
+        const orderL3 = isStringANumber(order3) ? parseInt(order3) : c3.id;
         return {
           id: c3.id,
           image: c3.MetaTagDescription,
