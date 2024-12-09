@@ -26,6 +26,7 @@ const createCategoryListElement = (
 ): CategoryListElement => {
   const order = getOrder(category.Title, mainCategoryTitle);
   const orderNumber = isStringANumber(order) ? parseInt(order) : category.id;
+  const isMainCategory = category.Title === mainCategoryTitle;
 
   const children =
     category.children?.map((child) =>
@@ -39,7 +40,7 @@ const createCategoryListElement = (
     name: category.name,
     order: orderNumber,
     children,
-    showOnHome: false,
+    showOnHome: isMainCategory && category.Title.includes('#'),
   };
 };
 
@@ -52,10 +53,6 @@ export const getCategoryTree = async (
     return [];
   }
 
-  const toShowOnHome = res.data
-    .filter((category) => category.Title.includes('#'))
-    .map((category) => category.id);
-
   const categories = res.data.map((c1) =>
     createCategoryListElement(c1, c1.Title)
   );
@@ -64,11 +61,8 @@ export const getCategoryTree = async (
 
   if (categories.length <= 5) {
     return categories.map((category) => ({ ...category, showOnHome: true }));
-  } else if (toShowOnHome.length > 0) {
-    return categories.map((category) => ({
-      ...category,
-      showOnHome: toShowOnHome.includes(category.id),
-    }));
+  } else if (categories.some((category) => category.showOnHome)) {
+    return categories;
   }
   return categories.map((category, index) => ({
     ...category,
