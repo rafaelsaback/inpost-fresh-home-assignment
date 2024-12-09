@@ -9,11 +9,19 @@ export interface CategoryListElement {
   showOnHome: boolean;
 }
 
-const getOrder = (title: string): string => {
+const getOrder = (category: Category): number => {
+  const { Title: title, id } = category;
+
   if (title?.includes('#')) {
-    return title.split('#')[0];
+    const splitTitle = title.split('#');
+    if (isStringAnIntNumber(splitTitle[0])) {
+      return parseInt(splitTitle[0]);
+    }
+  } else if (isStringAnIntNumber(title)) {
+    return parseInt(title);
   }
-  return title;
+
+  return id;
 };
 
 const isStringAnIntNumber = (strNumber: string): boolean => {
@@ -24,11 +32,6 @@ const createCategoryListElement = (
   category: Category,
   isMainCategory = false
 ): CategoryListElement => {
-  const order = getOrder(category.Title);
-  const orderNumber = isStringAnIntNumber(order)
-    ? parseInt(order)
-    : category.id;
-
   const children = category.children?.map((child) =>
     createCategoryListElement(child)
   );
@@ -39,7 +42,7 @@ const createCategoryListElement = (
     id: category.id,
     image: category.MetaTagDescription,
     name: category.name,
-    order: orderNumber,
+    order: getOrder(category),
     children: children ?? [],
     showOnHome: isMainCategory && category.Title.includes('#'),
   };
