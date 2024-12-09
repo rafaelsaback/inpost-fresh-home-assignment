@@ -39,43 +39,39 @@ export const getCategoryTree = async (
       toShowOnHome.push(c1.id);
     }
 
-    const l2Kids = c1.children
-      ? c1.children.map((c2) => {
-          const order2 =
-            c2.Title && c2.Title.includes('#') ? getOrder(c2.Title) : c1.Title;
-          const orderL2 = isStringANumber(order2) ? parseInt(order2) : c2.id;
+    const l2Kids = (c1.children ?? []).map((c2) => {
+      const order2 =
+        c2.Title && c2.Title.includes('#') ? getOrder(c2.Title) : c1.Title;
+      const orderL2 = isStringANumber(order2) ? parseInt(order2) : c2.id;
 
-          const l3Kids = c2.children
-            ? c2.children.map((c3) => {
-                let order3 = c1.Title;
-                if (c3.Title && c3.Title.includes('#')) {
-                  order3 = c3.Title.split('#')[0];
-                }
-                let orderL3 = parseInt(order3);
-                if (isNaN(orderL3)) {
-                  orderL3 = c3.id;
-                }
-                return {
-                  id: c3.id,
-                  image: c3.MetaTagDescription,
-                  name: c3.name,
-                  order: orderL3,
-                  children: [],
-                  showOnHome: false,
-                };
-              })
-            : [];
-          l3Kids.sort((a, b) => a.order - b.order);
-          return {
-            id: c2.id,
-            image: c2.MetaTagDescription,
-            name: c2.name,
-            order: orderL2,
-            children: l3Kids,
-            showOnHome: false,
-          };
-        })
-      : [];
+      const l3Kids = (c2.children ?? []).map((c3) => {
+        let order3 = c1.Title;
+        if (c3.Title && c3.Title.includes('#')) {
+          order3 = c3.Title.split('#')[0];
+        }
+        let orderL3 = parseInt(order3);
+        if (isNaN(orderL3)) {
+          orderL3 = c3.id;
+        }
+        return {
+          id: c3.id,
+          image: c3.MetaTagDescription,
+          name: c3.name,
+          order: orderL3,
+          children: [],
+          showOnHome: false,
+        };
+      });
+      l3Kids.sort((a, b) => a.order - b.order);
+      return {
+        id: c2.id,
+        image: c2.MetaTagDescription,
+        name: c2.name,
+        order: orderL2,
+        children: l3Kids,
+        showOnHome: false,
+      };
+    });
     l2Kids.sort((a, b) => a.order - b.order);
     return {
       id: c1.id,
