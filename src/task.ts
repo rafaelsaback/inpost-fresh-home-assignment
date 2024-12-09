@@ -20,46 +20,25 @@ const isStringANumber = (strNumber: string): boolean => {
   return !isNaN(parseInt(strNumber));
 };
 
-const sortElements = (
+const createCategoryListElement = (
   category: Category,
   mainCategoryTitle: string = category.Title
-) => {
+): CategoryListElement => {
   const order = getOrder(category.Title, mainCategoryTitle);
-  const orderL1 = isStringANumber(order) ? parseInt(order) : category.id;
+  const orderNumber = isStringANumber(order) ? parseInt(order) : category.id;
 
-  const l2Kids = (category.children ?? []).map((c2) => {
-    const order2 = getOrder(c2.Title, mainCategoryTitle);
-    const orderL2 = isStringANumber(order2) ? parseInt(order2) : c2.id;
+  const children =
+    category.children?.map((child) =>
+      createCategoryListElement(child, mainCategoryTitle)
+    ) ?? [];
 
-    const l3Kids = (c2.children ?? []).map((c3) => {
-      const order3 = getOrder(c3.Title, mainCategoryTitle);
-      const orderL3 = isStringANumber(order3) ? parseInt(order3) : c3.id;
-      return {
-        id: c3.id,
-        image: c3.MetaTagDescription,
-        name: c3.name,
-        order: orderL3,
-        children: [],
-        showOnHome: false,
-      };
-    });
-    l3Kids.sort((a, b) => a.order - b.order);
-    return {
-      id: c2.id,
-      image: c2.MetaTagDescription,
-      name: c2.name,
-      order: orderL2,
-      children: l3Kids,
-      showOnHome: false,
-    };
-  });
-  l2Kids.sort((a, b) => a.order - b.order);
+  children.sort((a, b) => a.order - b.order);
   return {
     id: category.id,
     image: category.MetaTagDescription,
     name: category.name,
-    order: orderL1,
-    children: l2Kids,
+    order: orderNumber,
+    children,
     showOnHome: false,
   };
 };
@@ -79,7 +58,7 @@ export const getCategoryTree = async (
     if (c1.Title.includes('#')) {
       toShowOnHome.push(c1.id);
     }
-    return sortElements(c1, c1.Title);
+    return createCategoryListElement(c1, c1.Title);
   });
 
   result.sort((a, b) => a.order - b.order);
