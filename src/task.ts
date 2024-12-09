@@ -33,22 +33,18 @@ export const getCategoryTree = async (
 
   const result = res.data.map((c1) => {
     const order = getOrder(c1.Title);
+    const orderL1 = isStringANumber(order) ? parseInt(order) : c1.id;
+
     if (c1.Title.includes('#')) {
       toShowOnHome.push(c1.id);
     }
 
-    const orderL1 = isStringANumber(order) ? parseInt(order) : c1.id;
-
     const l2Kids = c1.children
       ? c1.children.map((c2) => {
-          let order2 = c1.Title;
-          if (c2.Title && c2.Title.includes('#')) {
-            order2 = c2.Title.split('#')[0];
-          }
-          let orderL2 = parseInt(order2);
-          if (isNaN(orderL2)) {
-            orderL2 = c2.id;
-          }
+          const order2 =
+            c2.Title && c2.Title.includes('#') ? getOrder(c2.Title) : c1.Title;
+          const orderL2 = isStringANumber(order2) ? parseInt(order2) : c2.id;
+
           const l3Kids = c2.children
             ? c2.children.map((c3) => {
                 let order3 = c1.Title;
